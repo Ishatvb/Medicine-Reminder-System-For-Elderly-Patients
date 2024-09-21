@@ -54,7 +54,7 @@ function LoginPage(){
             password: password,
         };
 
-        axios.post('http://192.168.17.54:5001/login-user', userData).then(res => {
+        axios.post('http://192.168.43.121:5050/login-user', userData).then(res => {
         console.log(res.data);
         if (res.data.status == 'ok') {
             Alert.alert('Logged In Successfull');
