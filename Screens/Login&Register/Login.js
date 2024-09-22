@@ -55,7 +55,7 @@ function LoginPage(){
             password: password,
         };
 
-        axios.post('http://192.168.103.18:5050/login-user', userData).then(res => {
+        axios.post('https://b48b-14-139-241-203.ngrok-free.app/login-user', userData).then(res => {
         console.log(res.data);
         if (res.data.status == 'ok') {
             Alert.alert('Logged In Successfull');

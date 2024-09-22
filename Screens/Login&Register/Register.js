@@ -38,7 +38,7 @@ function RegisterPage(){
         };
         if(nameVerify && ageVerify && mobileVerify && passwordVerify){
             axios
-        .post("http://192.168.103.18:5050/register",userData)
+        .post("https://b48b-14-139-241-203.ngrok-free.app/register",userData)
         .then(res =>{
             console.log(res.data);
             if (res.data.status == 'ok'){
@@ -99,7 +99,7 @@ function RegisterPage(){
             setPasswordVerify(true); 
         }
     }
-    
+
     return(
         <ScrollView 
         contentContainerStyle={{flexGrow:1}} 

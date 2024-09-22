@@ -15,7 +15,7 @@ const ProfileScreen = () => {
   async function getData() {
     try {
       const token = await AsyncStorage.getItem('token');
-      const res = await axios.post('http://192.168.103.18:5050/userdata', { token });
+      const res = await axios.post('https://b48b-14-139-241-203.ngrok-free.app/userdata', { token });
       console.log('API Response:', res.data);  // Log the full API response
       setUserData(res.data.data);
       setLoading(false);
