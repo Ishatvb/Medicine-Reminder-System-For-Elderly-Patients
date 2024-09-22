@@ -9,6 +9,7 @@ import Error from 'react-native-vector-icons/MaterialIcons';
 import axios from "axios";
 import { Alert } from "react-native";
 import { useEffect } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 function LoginPage(){
@@ -54,11 +55,11 @@ function LoginPage(){
             password: password,
         };
 
-        axios.post('http://192.168.43.121:5050/login-user', userData).then(res => {
+        axios.post('http://192.168.103.18:5050/login-user', userData).then(res => {
         console.log(res.data);
         if (res.data.status == 'ok') {
             Alert.alert('Logged In Successfull');
-            // AsyncStorage.setItem('token', res.data.data);
+            AsyncStorage.setItem('token', res.data.data);
             // AsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
             // AsyncStorage.setItem('userType',res.data.userType)
             navigation.navigate('MainTabs');

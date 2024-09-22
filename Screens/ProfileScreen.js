@@ -15,7 +15,7 @@ const ProfileScreen = () => {
   async function getData() {
     try {
       const token = await AsyncStorage.getItem('token');
-      const res = await axios.post('http://192.168.43.121:5050/userdata', { token });
+      const res = await axios.post('http://192.168.103.18:5050/userdata', { token });
       console.log('API Response:', res.data);  // Log the full API response
       setUserData(res.data.data);
       setLoading(false);
@@ -27,13 +27,13 @@ const ProfileScreen = () => {
   }
   
 
-  // Logout function
-  const handleLogout = () => {
-    Alert.alert('Logout', 'Are you sure you want to log out?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Logout', onPress: () => navigation.replace('Onboard') }, 
-    ]);
-  };
+ // Logout function
+ const handleLogout = () => {
+  Alert.alert('Logout', 'Are you sure you want to log out?', [
+    { text: 'Cancel', style: 'cancel' },
+    { text: 'Logout', onPress: () => navigation.replace('Login') }, // Navigates to OnboardScreen
+  ]);
+};
 
   // Fetch user data on component mount
   useEffect(() => {

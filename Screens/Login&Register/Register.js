@@ -3,6 +3,7 @@ import styles from "./style";
 import { TextInput } from "react-native-paper";
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Mobile from 'react-native-vector-icons/Entypo';
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import Error from 'react-native-vector-icons/MaterialIcons';
@@ -37,7 +38,7 @@ function RegisterPage(){
         };
         if(nameVerify && ageVerify && mobileVerify && passwordVerify){
             axios
-        .post("http://192.168.43.121:5050/register",userData)
+        .post("http://192.168.103.18:5050/register",userData)
         .then(res =>{
             console.log(res.data);
             if (res.data.status == 'ok'){
@@ -98,7 +99,7 @@ function RegisterPage(){
             setPasswordVerify(true); 
         }
     }
-
+    
     return(
         <ScrollView 
         contentContainerStyle={{flexGrow:1}} 
