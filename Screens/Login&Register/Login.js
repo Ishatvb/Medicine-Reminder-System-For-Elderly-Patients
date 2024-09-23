@@ -55,21 +55,27 @@ function LoginPage(){
             password: password,
         };
 
-        axios.post('https://b48b-14-139-241-203.ngrok-free.app/login-user', userData).then(res => {
-        console.log(res.data);
-        if (res.data.status == 'ok') {
-            Alert.alert('Logged In Successfull');
-            AsyncStorage.setItem('token', res.data.data);
-            // AsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
-            // AsyncStorage.setItem('userType',res.data.userType)
-            navigation.navigate('MainTabs');
-            // if(res.data.userType=="Admin"){
-            //     navigation.navigate('AdminScreen');
-            // }else{
-            //     navigation.navigate('Home');
-            // }
-        }
-      });
+
+        // const NGROK_URL = "https://34a0-2401-4900-56a3-f10f-1402-9482-e7c6-f56e.ngrok-free.app";
+        
+        // .post('https://192.168.213.18:5001/login-user', userData)
+        
+        axios
+        .post('http://192.168.43.121:5050/login-user', userData)
+        // .post(`${NGROK_URL}/login-user`, userData)
+        .then(async res => {
+            if (res.data.status === 'ok') {
+                Alert.alert('Login Successful');
+                await AsyncStorage.setItem('token', res.data.data);
+                await AsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
+                navigation.navigate('MainTabs');
+            } else {
+                Alert.alert('Login Failed', res.data.message);
+            }
+        })
+        .catch(err => {
+            Alert.alert('Error', 'Something went wrong');
+        });
     }
     // async function getData() {
     //   const data = await AsyncStorage.getItem('isLoggedIn');

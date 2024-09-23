@@ -36,9 +36,12 @@ function RegisterPage(){
             mobile:mobile,
             password:password,
         };
+        // const NGROK_URL = "https://34a0-2401-4900-56a3-f10f-1402-9482-e7c6-f56e.ngrok-free.app";
+        
         if(nameVerify && ageVerify && mobileVerify && passwordVerify){
-            axios
-        .post("https://b48b-14-139-241-203.ngrok-free.app/register",userData)
+        axios
+        .post("http://192.168.43.121:5050/register",userData)
+        // .post(`${NGROK_URL}/register`,userData)
         .then(res =>{
             console.log(res.data);
             if (res.data.status == 'ok'){

@@ -14,17 +14,38 @@ import LoginPage from './Screens/Login&Register/Login';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RegisterPage from './Screens/Login&Register/Register';
 import { Drawer } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState } from 'react';
+
 
 // Main App Component
 export default function App(){
     const TabNav = createBottomTabNavigator();
     const Stack = createNativeStackNavigator();
 
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+     // Fetch login state from AsyncStorage
+    const getData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('isLoggedIn');
+            if (value !== null) {
+                setIsLoggedIn(JSON.parse(value));
+            } else {
+                setIsLoggedIn(false);
+            }
+        } catch (error) {
+            console.error('Error fetching login state', error);
+        }
+    };
+
     useEffect(() => {
-        setTimeout(()=>{
-            SplashScreen.hide(); // Hide the splash screen after the app has loaded
-        }, 500)
-    });
+        getData();  // Check if the user is logged in
+        setTimeout(() => {
+            SplashScreen.hide();  // Hide splash screen after some delay
+        }, 500);
+    }, []);
+
 
     const tabConfig = [
         {
@@ -93,15 +114,31 @@ export default function App(){
     </TabNav.Navigator>
     );
 
+    // Stack Navigator for Login/Register
+    const LoginNav = () => (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Login" component={LoginPage} />
+            <Stack.Screen name="Register" component={RegisterPage} />
+            <Stack.Screen name="MainTabs" component={TabNavigator} />
+        </Stack.Navigator>
+    );
+
+    if (isLoggedIn === null) {
+        // Return null or splash screen while checking login state
+        return null;
+    }
+
     return(
         <NavigationContainer>
-            <Stack.Navigator screenOptions={{
+            {/* <Stack.Navigator screenOptions={{
                 headerShown: false
             }}>
                 <Stack.Screen name="Login" component={LoginPage}></Stack.Screen>
                 <Stack.Screen name="Register" component={RegisterPage}></Stack.Screen>
                 <Stack.Screen name="MainTabs" component={TabNavigator}></Stack.Screen>
-            </Stack.Navigator>
+            </Stack.Navigator> */}
+            
+            {isLoggedIn ? <TabNavigator /> : <LoginNav />}
         </NavigationContainer>
         // Comment...
         // <NavigationContainer>

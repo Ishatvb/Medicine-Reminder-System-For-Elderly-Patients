@@ -10,30 +10,37 @@ const ProfileScreen = () => {
   const [userData, setUserData] = useState('');
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
-
+  
   // Function to fetch user data
   async function getData() {
     try {
       const token = await AsyncStorage.getItem('token');
-      const res = await axios.post('https://b48b-14-139-241-203.ngrok-free.app/userdata', { token });
-      console.log('API Response:', res.data);  // Log the full API response
+      if (!token) {
+        throw new Error('Token not found');
+      }
+      const res = await axios.post('http://192.168.43.121:5050/userdata', { token });
       setUserData(res.data.data);
-      setLoading(false);
     } catch (error) {
       console.error('Error fetching user data:', error.message || error);
       Alert.alert('Error', 'Failed to fetch user data. Please check your connection.');
+    } finally {
       setLoading(false);
     }
   }
   
+  
 
  // Logout function
- const handleLogout = () => {
+ const handleLogout = async () => {
   Alert.alert('Logout', 'Are you sure you want to log out?', [
     { text: 'Cancel', style: 'cancel' },
-    { text: 'Logout', onPress: () => navigation.replace('Login') }, // Navigates to OnboardScreen
+    { text: 'Logout', onPress: async () => {
+      await AsyncStorage.multiRemove(['isLoggedIn', 'token', 'LoginUser']);
+      navigation.replace('Login'); // Navigate to the Login screen
+    }},
   ]);
 };
+
 
   // Fetch user data on component mount
   useEffect(() => {
@@ -54,13 +61,13 @@ const ProfileScreen = () => {
       <View style={styles.profileContainer}>
         {/* Avatar and Name */}
         <Avatar.Image
-          size={150}
-          style={styles.avatar}
-          source={{
-            uri: userData?.image || 'default_avatar_url', // Provide a default image URL here
-          }}
-        />
-        <Text style={styles.nameText}>{userData.name || 'Name not available'}</Text>
+        size={150}
+        style={styles.avatar}
+        source={{
+          uri: userData?.image || 'default_avatar_url', // Use a real default image URL
+        }}
+      />
+      <Text style={styles.nameText}>{userData?.name || 'Name not available'}</Text>
       </View>
 
       {/* User Information Section */}
