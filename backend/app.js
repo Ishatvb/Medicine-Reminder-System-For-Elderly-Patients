@@ -1,14 +1,25 @@
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
-app.use(express.json());
 const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
+const multer = require("multer");
+const path = require("path");
+const cors = require('cors');
 
+
+
+// Create an Express application
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+// MongoDB connection URI
 const mongoUrl = "mongodb+srv://beoharishatv7470:medicinereminderadmin@cluster0.rlinx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
+// JWT Secret Key
 const JWT_SECRET = "hvdvay6ert72839289()aiy8t87qt72393293883uhefiuh78ttq3ifi78272jdsds039[]]pou89ywe";
 
+// Connect to MongoDB
 mongoose
     .connect(mongoUrl)
     .then(() => {
@@ -20,10 +31,25 @@ mongoose
 require('./UserDetails')
 const User = mongoose.model("UserInfo");
 
-app.get("/", (req, res) => {
-    res.send({ status: "Started" })
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'Images'); // Directory to save uploaded files
+    },
+    filename: (req, file, cb) => {
+        console.log(file)
+        cb(null, Date.now() + '-' + path.extname(file.originalname)) // Name of the file
+    }
 });
 
+const upload = multer({ storage: storage })
+
+// Basic endpoint for testing the server
+app.get("/upload", (req, res) => {
+    res.render("upload");
+});
+
+// User registration endpoint
 app.post("/register", async (req, res) => {
     const { name, mobile, age, password } = req.body;
 
@@ -47,6 +73,7 @@ app.post("/register", async (req, res) => {
     }
 });
 
+// User login endpoint
 app.post("/login-user", async (req, res) => {
     const { mobile, password } = req.body;
     const oldUser = await User.findOne({ mobile: mobile });
@@ -67,6 +94,7 @@ app.post("/login-user", async (req, res) => {
     }
 });
 
+// Get user data endpoint
 app.post("/userdata", async (req, res) => {
     const { token } = req.body;
     try {
@@ -81,6 +109,19 @@ app.post("/userdata", async (req, res) => {
     }
 });
 
+// File upload endpoint
+app.post("/upload", upload.single('image'), (req, res) => {
+    // if (!req.file) {
+    //     console.error('No file uploaded');
+    //     return res.status(400).send({ status: "error", message: "No file uploaded!" });
+    // }
+
+    // console.log("Uploaded file successfully:", req.file); // Log the uploaded file details
+    // res.json({ status: 'ok', message: 'File uploaded successfully', filePath: req.file.path });
+    res.send("Image Uploaded");
+});
+
+// Start the Express server
 app.listen(5050, () => {
     console.log("Node js server started.");
 })

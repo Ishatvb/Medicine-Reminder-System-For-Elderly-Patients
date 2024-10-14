@@ -139,6 +139,7 @@ export default function App(){
             </Stack.Navigator> */}
             
             {isLoggedIn ? <TabNavigator /> : <LoginNav />}
+            {/* {<TabNavigator />} */}
         </NavigationContainer>
         // Comment...
         // <NavigationContainer>
