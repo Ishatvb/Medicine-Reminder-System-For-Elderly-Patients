@@ -4,7 +4,7 @@ import sys
 import json
 
 # Replace 'your_api_key' with your actual Google API key
-API_KEY = "AIzaSyDAu3ZtKtIablIbNP5RAXx_A54NMgeKzKw"
+# API_KEY = "AIzaSyDAu3ZtKtIablIbNP5RAXx_A54NMgeKzKw"
 genai.configure(api_key=API_KEY)
 
 def prep_image(image_path):
