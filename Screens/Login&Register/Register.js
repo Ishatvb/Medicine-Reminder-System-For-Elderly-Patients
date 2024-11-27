@@ -40,7 +40,7 @@ function RegisterPage(){
         
         if(nameVerify && ageVerify && mobileVerify && passwordVerify){
         axios
-        .post("http://192.168.204.18:5050/register",userData)
+        .post("http://192.168.94.18:5050/register",userData)
         // .post(`${NGROK_URL}/register`,userData)
         .then(res =>{
             console.log(res.data);

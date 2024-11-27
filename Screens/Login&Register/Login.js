@@ -61,7 +61,7 @@ function LoginPage(){
         // .post('https://192.168.213.18:5001/login-user', userData)
         
         axios
-        .post('http://192.168.204.18:5050/login-user', userData)
+        .post('http://192.168.94.18:5050/login-user', userData)
         // .post(`${NGROK_URL}/login-user`, userData)
         .then(async res => {
             if (res.data.status === 'ok') {

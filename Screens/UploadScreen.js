@@ -37,7 +37,7 @@ export default function UploadScreen() {
     });
 
     try {
-      const response = await axios.post('http://192.168.204.18:5050/upload', formData, {
+      const response = await axios.post('http://192.168.94.18:5050/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -54,11 +54,7 @@ export default function UploadScreen() {
       // Alert.alert('Upload Failed', 'An error occurred while uploading the image.');
     }
 
-    
-
-
-
-
+  
 
 
     // try {

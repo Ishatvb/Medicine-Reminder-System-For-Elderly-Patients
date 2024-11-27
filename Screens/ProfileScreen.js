@@ -18,7 +18,7 @@ const ProfileScreen = () => {
       if (!token) {
         throw new Error('Token not found');
       }
-      const res = await axios.post('http://192.168.204.18:5050/userdata', { token });
+      const res = await axios.post('http://192.168.94.18:5050/userdata', { token });
       setUserData(res.data.data);
     } catch (error) {
       console.error('Error fetching user data:', error.message || error);
