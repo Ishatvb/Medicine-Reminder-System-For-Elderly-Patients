@@ -81,10 +81,11 @@ const ProfileScreen = () => {
         </View>
 
         <View style={styles.infoRow}>
-          <Text style={styles.label}>Uploaded Prescription:</Text>
+          <Text style={styles.label}>Hi User!:</Text>
           {/* <Text style={styles.value}>{userData?.prescription || 'No prescription uploaded'}</Text> */}
         </View>
-        <Text style={styles.value}>{userData?.prescription || 'No prescription uploaded'}</Text>
+        
+        <Text style={styles.value}>{userData?.prescription || 'Take your medicines on Time'}</Text>
 
       </View>
 

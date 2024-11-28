@@ -28,9 +28,12 @@ mongoose.connect(mongoUrl)
         console.log(e);
     });
 
-// User schema and model
+// Import Models
 require('./UserDetails');
+require('./PrescriptionDetails');
 const User = mongoose.model("UserInfo");
+const Prescription = mongoose.model("Prescription");
+
 
 // Directory for image uploads
 const uploadDirectory = path.join(__dirname, 'Images');
@@ -121,36 +124,90 @@ app.post("/upload", upload.single("image"), (req, res) => {
     res.send({ status: "ok", filePath });
   });
 
-// Endpoint to process and extract text from uploaded images
-// Image Processing Endpoint
+
+// Function to process the extracted text from image and store in PrescriptionDetails
 app.post("/process-image", async (req, res) => {
-    const { filePath } = req.body;
-    if (!filePath) {
-      return res.status(400).send({ status: "error", message: "File path is required." });
+    const { filePath, userId } = req.body;
+
+    if (!filePath || !userId) {
+        return res.status(400).send({ status: "error", message: "File path and user ID are required." });
     }
-  
+
     const fullPath = path.join(__dirname, filePath);
-    console.log("Processing image at path:", fullPath);
     if (!fs.existsSync(fullPath)) {
-      return res.status(400).send({ status: "error", message: "File does not exist." });
+        return res.status(400).send({ status: "error", message: "File does not exist." });
     }
-  
-    const pythonScript = `python gemini_api.py "${fullPath}"`;
-    exec(pythonScript, (error, stdout, stderr) => {
-      if (error) {
-        console.error("Error executing Python script:", stderr);
-        return res.status(500).send({ status: "error", message: "Image processing failed." });
-      }
-  
-      try {
-        const output = JSON.parse(stdout);
-        res.send({ status: "ok", data: output });
-      } catch (err) {
-        console.error("Invalid response format from Python script:", err);
-        res.status(500).send({ status: "error", message: "Invalid response from processing script." });
-      }
-    });
-  });
+
+    try {
+        const scriptPath = path.join(__dirname, "gemini_api.py");
+        const pythonScript = `python "${scriptPath}" "${fullPath}"`;
+
+        exec(pythonScript, async (error, stdout, stderr) => {
+            if (error) {
+                return res.status(500).send({ status: "error", message: "Image processing failed." });
+            }
+
+            const output = JSON.parse(stdout);
+            const medicines = output.medicines;
+            if (!medicines || medicines.length === 0) {
+                return res.status(400).send({ status: "error", message: "No medicines found in the image." });
+            }
+
+            // Store extracted medicines in PrescriptionDetails
+            const newPrescription = await Prescription.create({
+                user: userId,
+                medicines: medicines,
+            });
+
+            // Store medicines in MedicineDetails and calculate durations
+            for (const medicine of medicines) {
+                const { name, dosage, quantity } = medicine;
+                let duration = calculateMedicineDuration(dosage, quantity);
+
+                // Store medicine in MedicineDetails
+                await Medicine.create({
+                    user: userId,
+                    name: name,
+                    dosage: dosage,
+                    quantity: quantity,
+                    duration: duration
+                });
+            }
+
+            res.status(200).send({ status: "ok", message: "Prescription processed and medicines stored." });
+        });
+    } catch (error) {
+        return res.status(500).send({ status: "error", message: "Error processing the image." });
+    }
+});
+
+// Get all prescriptions for a user
+app.post("/user-prescriptions", async (req, res) => {
+    const { token } = req.body;
+    try {
+        const user = jwt.verify(token, JWT_SECRET);
+        const usermobile = user.mobile;
+
+        // Fetch the user by mobile number
+        const userData = await User.findOne({ mobile: usermobile });
+        if (!userData) {
+            return res.status(404).json({ status: "error", message: "User not found" });
+        }
+
+        // Fetch prescriptions for the user
+        const prescriptions = await Prescription.find({ user: userData._id });
+        if (prescriptions.length === 0) {
+            return res.status(404).json({ status: "error", message: "No prescriptions found" });
+        }
+
+        return res.status(200).json({ status: "ok", data: prescriptions });
+    } catch (error) {
+        console.error(error);
+        return res.status(401).json({ status: "error", message: "Invalid token or server error" });
+    }
+});
+
+
 
 // Start the Express server
 app.listen(5050, () => {
