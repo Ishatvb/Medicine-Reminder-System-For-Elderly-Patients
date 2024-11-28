@@ -1,13 +1,21 @@
-// reminderschema.js
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const ReminderDetailsSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  prescription: { type: mongoose.Schema.Types.ObjectId, ref: 'Prescription', required: true },
-  medicine: { type: String, required: true },
-  reminder_time: { type: Date, required: true }, // The time to remind the user
-  is_completed: { type: Boolean, default: false },
-  created_at: { type: Date, default: Date.now },
+const medicineSchema = new Schema({
+  name: { type: String, required: true },
+  duration: { type: String, required: true },  // Example: "30 days"
 });
 
-module.exports = mongoose.model('Reminder', ReminderDetailsSchema);
+const reminderDetailsSchema = new Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    breakfast: [medicineSchema],  // Medicines to be taken before breakfast
+    lunch: [medicineSchema],      // Medicines to be taken before lunch
+    dinner: [medicineSchema],     // Medicines to be taken before dinner
+  },
+  { timestamps: true }
+);
+
+const ReminderDetails = mongoose.model('ReminderDetails', reminderDetailsSchema);
+
+module.exports = ReminderDetails;
