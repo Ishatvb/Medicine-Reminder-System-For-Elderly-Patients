@@ -7,6 +7,7 @@ const path = require("path");
 const cors = require('cors');
 const { exec } = require('child_process');
 const fs = require('fs');
+const nodeSchedule = require('node-schedule');
 
 // Create an Express application
 const app = express();
@@ -31,9 +32,10 @@ mongoose.connect(mongoUrl)
 // Import Models
 require('./UserDetails');
 require('./PrescriptionDetails');
+require('./ReminderDetails'); 
 const User = mongoose.model("UserInfo");
 const Prescription = mongoose.model("Prescription");
-
+const ReminderDetails = mongoose.model("ReminderDetails");
 
 // Directory for image uploads
 const uploadDirectory = path.join(__dirname, 'Images');
@@ -206,7 +208,6 @@ app.post("/user-prescriptions", async (req, res) => {
         return res.status(401).json({ status: "error", message: "Invalid token or server error" });
     }
 });
-
 
 
 // Start the Express server

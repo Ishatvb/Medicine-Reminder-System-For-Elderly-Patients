@@ -3,7 +3,9 @@ const { Schema } = mongoose;
 
 const medicineSchema = new Schema({
   name: { type: String, required: true },
-  duration: { type: String, required: true },  // Example: "30 days"
+  dosage: { type: String, required: true },  // breakfast/lunch/dinner
+  duration: { type: Number, required: true }, // Duration as an integer  Example: "30 days"
+  timing: { type: String, required: true }
 });
 
 const reminderDetailsSchema = new Schema(
@@ -17,5 +19,6 @@ const reminderDetailsSchema = new Schema(
 );
 
 const ReminderDetails = mongoose.model('ReminderDetails', reminderDetailsSchema);
-
 module.exports = ReminderDetails;
+
+
